@@ -33,7 +33,7 @@ type (
 
 var (
 	// setAnglePrefix is the prefix message for new angle setting
-	setAnglePrefix = "Set servo angle degrees to:"
+	setAnglePrefix = []byte("Set servo angle degrees to:")
 )
 
 // NewDefaultHandler creates a new instance of DefaultHandler
