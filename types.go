@@ -56,7 +56,7 @@ var (
 //
 // An instance of DefaultHandler and an error if any occurred during initialization
 func NewDefaultHandler(
-	pwm tinygodriversservo.PWM,
+	pwm machine.PWM,
 	pin machine.Pin,
 	afterSetAngleFunc func(angle uint16),
 	isMovementEnabled func() bool,
