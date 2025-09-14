@@ -18,4 +18,5 @@ const (
 	ErrorCodeServoAngleBelowMinPulseWidth
 	ErrorCodeServoAngleAboveMaxPulseWidth
 	ErrorCodeServoFailedToSetServoAngle
+	ErrorCodeServoNilHandler
 )
