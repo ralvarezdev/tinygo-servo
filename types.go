@@ -1,5 +1,3 @@
-//go:build tinygo && (rp2040 || rp2350)
-
 package tinygo_servo
 
 import (
@@ -7,7 +5,7 @@ import (
 
 	"machine"
 
-	tinygotypes "github.com/ralvarezdev/tinygo-types"
+	tinygoerrors "github.com/ralvarezdev/tinygo-errors"
 	tinygodriversservo "tinygo.org/x/drivers/servo"
 	tinygologger "github.com/ralvarezdev/tinygo-logger"
 )
@@ -67,7 +65,7 @@ func NewDefaultHandler(
 	maxAngle uint16,
 	isDirectionInverted bool,
 	logger tinygologger.Logger,
-) (*DefaultHandler, tinygotypes.ErrorCode) {
+) (*DefaultHandler, tinygoerrors.ErrorCode) {
 	// Configure the PWM
 	if err := pwm.Configure(
 		machine.PWMConfig{
@@ -105,7 +103,7 @@ func NewDefaultHandler(
 
 	// Center the servo on initialization
 	_ = handler.SetAngleToCenter()
-	return handler, tinygotypes.ErrorCodeNil
+	return handler, tinygoerrors.ErrorCodeNil
 }
 
 // GetAngle returns the current angle of the servo motor
@@ -122,7 +120,7 @@ func (h *DefaultHandler) GetAngle() uint16 {
 // Parameters:
 //
 // angle: The angle to set the servo motor to, must be between 0 and the actuation range
-func (h *DefaultHandler) SetAngle(angle uint16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
 	// Check if the angle is within the valid range
 	if angle < h.centerAngle-h.maxAngle || angle > h.centerAngle+h.maxAngle {
 		return ErrorCodeServoAngleOutOfRange
@@ -133,7 +131,7 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygotypes.ErrorCode {
 
 	// Check if the angle is the same as the current angle
 	if angle == h.angle {
-		return tinygotypes.ErrorCodeNil
+		return tinygoerrors.ErrorCodeNil
 	}
 
 	// Check if the direction is inverted
@@ -166,7 +164,7 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygotypes.ErrorCode {
 		h.afterSetAngleFunc(angle)
 	}
 
-	return tinygotypes.ErrorCodeNil
+	return tinygoerrors.ErrorCodeNil
 }
 
 // IsAngleCentered checks if the servo motor angle is centered
@@ -183,7 +181,7 @@ func (h *DefaultHandler) IsAngleCentered() bool {
 // Returns:
 //
 // An error if the servo motor could not be centered
-func (h *DefaultHandler) SetAngleToCenter() tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetAngleToCenter() tinygoerrors.ErrorCode {
 	return h.SetAngle(h.centerAngle)
 }
 
@@ -196,7 +194,7 @@ func (h *DefaultHandler) SetAngleToCenter() tinygotypes.ErrorCode {
 // Returns:
 //
 // An error if the relative angle is not within the left and right limits
-func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygoerrors.ErrorCode {
 	// Calculate the absolute angle based on the center angle and relative angle
 	absoluteAngle := int16(h.centerAngle) + relativeAngle
 
@@ -218,7 +216,7 @@ func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygotyp
 // Returns:
 //
 // An error if the angle is not within the right limit
-func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygoerrors.ErrorCode {
 	return h.SetAngleRelativeToCenter(-int16(angle))
 }
 
@@ -231,12 +229,12 @@ func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygotypes.ErrorCode {
 // Returns:
 //
 // An error if the angle is not within the left limit
-func (h *DefaultHandler) SetAngleToLeft(angle uint16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode {
 	return h.SetAngleRelativeToCenter(int16(angle))
 }
 
 // SetDirectionToCenter sets the direction to center
-func (h *DefaultHandler) SetDirectionToCenter() tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetDirectionToCenter() tinygoerrors.ErrorCode {
 	return h.SetAngleToCenter()
 }
 
@@ -249,7 +247,7 @@ func (h *DefaultHandler) SetDirectionToCenter() tinygotypes.ErrorCode {
 // Returns:
 //
 // An error if the angle is not within the left limit
-func (h *DefaultHandler) SetDirectionToRight(angle uint16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetDirectionToRight(angle uint16) tinygoerrors.ErrorCode {
 	return h.SetAngleToLeft(angle)
 }
 
@@ -262,6 +260,6 @@ func (h *DefaultHandler) SetDirectionToRight(angle uint16) tinygotypes.ErrorCode
 // Returns:
 //
 // An error if the angle is not within the right limit
-func (h *DefaultHandler) SetDirectionToLeft(angle uint16) tinygotypes.ErrorCode {
+func (h *DefaultHandler) SetDirectionToLeft(angle uint16) tinygoerrors.ErrorCode {
 	return h.SetAngleToRight(angle)
 }

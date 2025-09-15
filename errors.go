@@ -1,9 +1,7 @@
-//go:build tinygo && (rp2040 || rp2350)
-
 package tinygo_servo
 
 import (
-	tinygotypes "github.com/ralvarezdev/tinygo-types"
+	tinygoerrors "github.com/ralvarezdev/tinygo-errors"
 )
 
 const (
@@ -12,7 +10,7 @@ const (
 )
 
 const (
-	ErrorCodeServoFailedToConfigurePWM tinygotypes.ErrorCode = tinygotypes.ErrorCode(iota + ErrorCodeServoStartNumber)
+	ErrorCodeServoFailedToConfigurePWM tinygoerrors.ErrorCode = tinygoerrors.ErrorCode(iota + ErrorCodeServoStartNumber)
 	ErrorCodeServoFailedToInitializeServo
 	ErrorCodeServoAngleOutOfRange
 	ErrorCodeServoAngleBelowMinPulseWidth
