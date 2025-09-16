@@ -99,6 +99,7 @@ func NewDefaultHandler(
 		angle:               centerAngle,
 		centerAngle:         centerAngle,
 		logger:  		 logger,
+		maxAngle:            maxAngle,
 	}
 
 	// Center the servo on initialization
