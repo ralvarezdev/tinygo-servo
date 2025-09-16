@@ -16,10 +16,5 @@ type (
 		SafeSetAngleToRight(angle uint16) tinygoerrors.ErrorCode
 		SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode
 		SafeSetAngleToLeft(angle uint16) tinygoerrors.ErrorCode
-		SetDirectionToCenter() tinygoerrors.ErrorCode
-		SetDirectionToRight(angle uint16) tinygoerrors.ErrorCode
-		SafeSetDirectionToRight(angle uint16) tinygoerrors.ErrorCode
-		SetDirectionToLeft(angle uint16) tinygoerrors.ErrorCode
-		SafeSetDirectionToLeft(angle uint16) tinygoerrors.ErrorCode
 	}
 )

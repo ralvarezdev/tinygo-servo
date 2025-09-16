@@ -218,7 +218,7 @@ func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygoerr
 //
 // An error if the angle is not within the right limit
 func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygoerrors.ErrorCode {
-	return h.SetAngleRelativeToCenter(-int16(angle))
+	return h.SetAngleRelativeToCenter(int16(angle))
 }
 
 // SafeSetAngleToRight sets the servo motor to the right by a specified angle without exceeding limits
@@ -247,7 +247,7 @@ func (h *DefaultHandler) SafeSetAngleToRight(angle uint16) tinygoerrors.ErrorCod
 //
 // An error if the angle is not within the left limit
 func (h *DefaultHandler) SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode {
-	return h.SetAngleRelativeToCenter(int16(angle))
+	return h.SetAngleRelativeToCenter(-int16(angle))
 }
 
 // SafeSetAngleToLeft sets the servo motor to the left by a specified angle without exceeding limits
@@ -264,67 +264,4 @@ func (h *DefaultHandler) SafeSetAngleToLeft(angle uint16) tinygoerrors.ErrorCode
 		angle = h.maxAngle
 	}
 	return h.SetAngleToLeft(angle)
-}
-
-// SetDirectionToCenter sets the direction to center
-func (h *DefaultHandler) SetDirectionToCenter() tinygoerrors.ErrorCode {
-	return h.SetAngleToCenter()
-}
-
-// SetDirectionToRight sets the direction to right
-//
-// Parameters:
-//
-// angle: The angle value to move the servo to the left, must be between 0 and the left limit
-//
-// Returns:
-//
-// An error if the angle is not within the left limit
-func (h *DefaultHandler) SetDirectionToRight(angle uint16) tinygoerrors.ErrorCode {
-	return h.SetAngleToLeft(angle)
-}
-
-// SafeSetDirectionToRight sets the direction to right without exceeding limits
-//
-// Parameters:
-//
-// angle: The angle value to move the servo to the left, must be between 0 and the left limit
-//
-// Returns:
-//
-// An error if the angle is not within the left limit
-func (h *DefaultHandler) SafeSetDirectionToRight(angle uint16) tinygoerrors.ErrorCode {
-	if angle > h.maxAngle {
-		angle = h.maxAngle
-	}
-	return h.SetDirectionToRight(angle)
-}
-
-// SetDirectionToLeft sets the direction to left
-//
-// Parameters:
-//
-// angle: The angle value to move the servo to the right, must be between 0 and the right limit
-//
-// Returns:
-//
-// An error if the angle is not within the right limit
-func (h *DefaultHandler) SetDirectionToLeft(angle uint16) tinygoerrors.ErrorCode {
-	return h.SetAngleToRight(angle)
-}
-
-// SafeSetDirectionToLeft sets the direction to left without exceeding limits
-//
-// Parameters:
-//
-// angle: The angle value to move the servo to the right, must be between 0 and the right limit
-//
-// Returns:
-//
-// An error if the angle is not within the right limit
-func (h *DefaultHandler) SafeSetDirectionToLeft(angle uint16) tinygoerrors.ErrorCode {
-	if angle > h.maxAngle {
-		angle = h.maxAngle
-	}
-	return h.SetDirectionToLeft(angle)
 }
