@@ -17,4 +17,5 @@ const (
 	ErrorCodeServoAngleAboveMaxPulseWidth
 	ErrorCodeServoFailedToSetServoAngle
 	ErrorCodeServoNilHandler
+	ErrorCodeServoUnknownDirection
 )
