@@ -6,15 +6,15 @@ import (
 	"machine"
 
 	tinygoerrors "github.com/ralvarezdev/tinygo-errors"
-	tinygodriversservo "tinygo.org/x/drivers/servo"
 	tinygologger "github.com/ralvarezdev/tinygo-logger"
+	tinygodriversservo "tinygo.org/x/drivers/servo"
 )
 
 type (
 	// DefaultHandler is the default implementation of the Servo interface
 	DefaultHandler struct {
-		afterSetAngleFunc  func(angle uint16)
-		isMovementEnabled  func() bool
+		afterSetAngleFunc   func(angle uint16)
+		isMovementEnabled   func() bool
 		isDirectionInverted bool
 		frequency           uint16
 		minPulseWidth       uint16
@@ -25,7 +25,7 @@ type (
 		maxAngle            uint16
 		servo               tinygodriversservo.Servo
 		angle               uint16
-		logger  		 tinygologger.Logger
+		logger              tinygologger.Logger
 	}
 )
 
@@ -87,8 +87,8 @@ func NewDefaultHandler(
 
 	// Initialize the servo with the provided parameters
 	handler := &DefaultHandler{
-		afterSetAngleFunc:  afterSetAngleFunc,
-		isMovementEnabled:  isMovementEnabled,
+		afterSetAngleFunc:   afterSetAngleFunc,
+		isMovementEnabled:   isMovementEnabled,
 		isDirectionInverted: isDirectionInverted,
 		frequency:           frequency,
 		minPulseWidth:       minPulseWidth,
@@ -98,7 +98,7 @@ func NewDefaultHandler(
 		servo:               servo,
 		angle:               centerAngle,
 		centerAngle:         centerAngle,
-		logger:  		 logger,
+		logger:              logger,
 		maxAngle:            maxAngle,
 	}
 
