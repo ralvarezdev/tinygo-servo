@@ -11,11 +11,13 @@ const (
 
 const (
 	ErrorCodeServoFailedToConfigurePWM tinygoerrors.ErrorCode = tinygoerrors.ErrorCode(iota + ErrorCodeServoStartNumber)
-	ErrorCodeServoFailedToInitializeServo
+	ErrorCodeServoZeroFrequency
 	ErrorCodeServoAngleOutOfRange
-	ErrorCodeServoAngleBelowMinPulseWidth
-	ErrorCodeServoAngleAboveMaxPulseWidth
-	ErrorCodeServoFailedToSetServoAngle
+	ErrorCodeServoInvalidMinPulseWidth
+	ErrorCodeServoInvalidMaxPulseWidth
 	ErrorCodeServoNilHandler
 	ErrorCodeServoUnknownDirection
+	ErrorCodeServoFailedToGetPWMChannel
+	ErrorCodeServoInvalidActuationRange
+	ErrorCodeServoInvalidCenterAngle
 )

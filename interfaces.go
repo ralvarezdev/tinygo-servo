@@ -13,8 +13,6 @@ type (
 		IsAngleCentered() bool
 		SetAngleToCenter() tinygoerrors.ErrorCode
 		SetAngleToRight(angle uint16) tinygoerrors.ErrorCode
-		SafeSetAngleToRight(angle uint16) tinygoerrors.ErrorCode
 		SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode
-		SafeSetAngleToLeft(angle uint16) tinygoerrors.ErrorCode
 	}
 )
