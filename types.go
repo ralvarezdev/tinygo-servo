@@ -35,6 +35,9 @@ var (
 
 	// setAnglePrefix is the prefix message for new angle setting
 	setAnglePrefix = []byte("Set servo angle degrees to:")
+
+	// setPulseWidthPrefix is the prefix message for new pulse width setting
+	setPulseWidthPrefix = []byte("Set servo pulse width to:")
 )
 
 // NewDefaultHandler creates a new instance of DefaultHandler
@@ -185,7 +188,7 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
 	}
 
 	// Check if the angle is within the valid range
-	if angle < h.centerAngle-h.leftLimitAngle || angle > h.centerAngle+h.rightLimitAngle {
+	if angle < h.leftLimitAngle || angle > h.rightLimitAngle {
 		return ErrorCodeServoAngleOutOfRange
 	}
 
@@ -200,7 +203,6 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
 	// Calculate the pulse
 	pulse := uint32(h.minPulseWidth) + uint32(float64(h.maxPulseWidth-h.minPulseWidth) * float64(angle) / float64(h.actuationRange))
 
-
 	// Set the servo angle
 	if h.isMovementEnabled == nil || h.isMovementEnabled() {
 		tinygopwm.SetDuty(
@@ -214,6 +216,7 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
 	// Log the new angle if logger is provided
 	if h.logger != nil {
 		h.logger.AddMessageWithUint16(setAnglePrefix, angle, true, true, false)
+		h.logger.AddMessageWithUint32(setPulseWidthPrefix, pulse, true, true, false)
 		h.logger.Debug()
 	}
 
@@ -303,7 +306,7 @@ func (h *DefaultHandler) SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode {
 	}
 
 	// Check if the angle is within the left limit
-	if angle > h.centerAngle-h.leftLimitAngle {
+	if angle > h.centerAngle - h.leftLimitAngle {
 		angle = h.centerAngle - h.leftLimitAngle
 	}
 	return h.SetAngleRelativeToCenter(-int16(angle))
