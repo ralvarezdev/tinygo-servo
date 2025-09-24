@@ -142,6 +142,11 @@ func NewDefaultHandler(
 		rightLimitAngle = actuationRange
 	}
 
+	// If the direction is inverted, swap the left and right limit angles
+	if isDirectionInverted {
+		leftLimitAngle, rightLimitAngle = actuationRange - rightLimitAngle, actuationRange - leftLimitAngle
+	}
+
 	// Initialize the servo with the provided parameters
 	handler := &DefaultHandler{
 		afterSetAngleFunc:   afterSetAngleFunc,
