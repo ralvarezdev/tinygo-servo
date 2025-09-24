@@ -38,6 +38,12 @@ var (
 
 	// setPulseWidthPrefix is the prefix message for new pulse width setting
 	setPulseWidthPrefix = []byte("Set servo pulse width to:")
+
+	// logLeftLimitAnglePrefix is the prefix message for left limit angle
+	logLeftLimitAnglePrefix = []byte("Servo left limit angle set to:")
+
+	// logRightLimitAnglePrefix is the prefix message for right limit angle
+	logRightLimitAnglePrefix = []byte("Servo right limit angle set to:")
 )
 
 // NewDefaultHandler creates a new instance of DefaultHandler
@@ -145,6 +151,25 @@ func NewDefaultHandler(
 	// If the direction is inverted, swap the left and right limit angles
 	if isDirectionInverted {
 		leftLimitAngle, rightLimitAngle = actuationRange - rightLimitAngle, actuationRange - leftLimitAngle
+	}
+
+	// Log the left and right limit angles if logger is provided
+	if logger != nil {
+		logger.AddMessageWithUint16(
+			logLeftLimitAnglePrefix,
+			leftLimitAngle,
+			true,
+			true,
+			false,
+		)
+		logger.AddMessageWithUint16(
+			logRightLimitAnglePrefix,
+			rightLimitAngle,
+			true,
+			true,
+			false,
+		)
+		logger.Debug()
 	}
 
 	// Initialize the servo with the provided parameters
