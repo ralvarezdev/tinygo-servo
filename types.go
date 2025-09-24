@@ -179,6 +179,11 @@ func (h *DefaultHandler) GetAngle() uint16 {
 //
 // angle: The angle to set the servo motor to, must be between 0 and the actuation range
 func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
+	// Check if the direction is inverted
+	if h.isDirectionInverted {
+		angle = h.actuationRange - angle
+	}
+
 	// Check if the angle is within the valid range
 	if angle < h.centerAngle-h.leftLimitAngle || angle > h.centerAngle+h.rightLimitAngle {
 		return ErrorCodeServoAngleOutOfRange
@@ -187,11 +192,6 @@ func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
 	// Check if the angle is the same as the current angle
 	if angle == h.angle {
 		return tinygoerrors.ErrorCodeNil
-	}
-
-	// Check if the direction is inverted
-	if h.isDirectionInverted {
-		angle = h.rightLimitAngle - (angle - h.leftLimitAngle)
 	}
 
 	// Update the current angle
