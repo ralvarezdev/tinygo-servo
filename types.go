@@ -30,20 +30,23 @@ type (
 )
 
 var (
-	// setPeriodPrefix is the prefix for the log message when setting the PWM period
-	setPeriodPrefix = []byte("Set Servo PWM period to:")
-
 	// setAnglePrefix is the prefix message for new angle setting
 	setAnglePrefix = []byte("Set servo angle degrees to:")
 
 	// setPulseWidthPrefix is the prefix message for new pulse width setting
 	setPulseWidthPrefix = []byte("Set servo pulse width to:")
+	
+	// setPeriodPrefix is the prefix for the log message when setting the PWM period
+	setPeriodPrefix = []byte("Set Servo PWM period to:")
 
-	// logLeftLimitAnglePrefix is the prefix message for left limit angle
-	logLeftLimitAnglePrefix = []byte("Servo left limit angle set to:")
+	// setLeftLimitAnglePrefix is the prefix message for left limit angle
+	setLeftLimitAnglePrefix = []byte("\tServo left limit angle set to:")
 
-	// logRightLimitAnglePrefix is the prefix message for right limit angle
-	logRightLimitAnglePrefix = []byte("Servo right limit angle set to:")
+	// setCenterAnglePrefix is the prefix message for center angle
+	setCenterAnglePrefix = []byte("\tServo center angle set to:")
+
+	// setRightLimitAnglePrefix is the prefix message for right limit angle
+	setRightLimitAnglePrefix = []byte("\tServo right limit angle set to:")
 )
 
 // NewDefaultHandler creates a new instance of DefaultHandler
@@ -96,18 +99,6 @@ func NewDefaultHandler(
 		return nil, ErrorCodeServoFailedToConfigurePWM
 	}
 
-	// Log the configured period
-	if logger != nil {
-		logger.AddMessageWithUint32(
-			setPeriodPrefix,
-			uint32(period),
-			true,
-			true,
-			false,
-		)
-		logger.Debug()
-	}
-
 	// Get the channel from the pin
 	channel, err := pwm.Channel(pin)
 	if err != nil {
@@ -148,22 +139,37 @@ func NewDefaultHandler(
 		rightLimitAngle = actuationRange
 	}
 
-	// If the direction is inverted, swap the left and right limit angles
+	// If the direction is inverted, swap the left and right limit angles and recalculate the center angle
 	if isDirectionInverted {
+		centerAngle = actuationRange - centerAngle
 		leftLimitAngle, rightLimitAngle = actuationRange - rightLimitAngle, actuationRange - leftLimitAngle
 	}
 
 	// Log the left and right limit angles if logger is provided
 	if logger != nil {
+		logger.AddMessageWithUint32(
+			setPeriodPrefix,
+			uint32(period),
+			true,
+			true,
+			false,
+		)
 		logger.AddMessageWithUint16(
-			logLeftLimitAnglePrefix,
+			setLeftLimitAnglePrefix,
 			leftLimitAngle,
 			true,
 			true,
 			false,
 		)
 		logger.AddMessageWithUint16(
-			logRightLimitAnglePrefix,
+			setCenterAnglePrefix,
+			centerAngle,
+			true,
+			true,
+			false,
+		)
+		logger.AddMessageWithUint16(
+			setRightLimitAnglePrefix,
 			rightLimitAngle,
 			true,
 			true,
@@ -212,11 +218,6 @@ func (h *DefaultHandler) GetAngle() uint16 {
 //
 // angle: The angle to set the servo motor to, must be between 0 and the actuation range
 func (h *DefaultHandler) SetAngle(angle uint16) tinygoerrors.ErrorCode {
-	// Check if the direction is inverted
-	if h.isDirectionInverted {
-		angle = h.actuationRange - angle
-	}
-
 	// Check if the angle is within the valid range
 	if angle < h.leftLimitAngle || angle > h.rightLimitAngle {
 		return ErrorCodeServoAngleOutOfRange
@@ -287,11 +288,16 @@ func (h *DefaultHandler) SetAngleToCenter() tinygoerrors.ErrorCode {
 // An error if the relative angle is not within the left and right limits
 func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygoerrors.ErrorCode {
 	// Calculate the absolute angle based on the center angle and relative angle
+	if h.isDirectionInverted {
+		relativeAngle = -relativeAngle
+	}
 	absoluteAngle := int16(h.centerAngle) + relativeAngle
 
 	// Check if the absolute angle is within the left and right limits
-	if absoluteAngle < int16(h.leftLimitAngle) || absoluteAngle > int16(h.rightLimitAngle) {
-		return ErrorCodeServoAngleOutOfRange
+	if absoluteAngle < int16(h.leftLimitAngle) {
+		absoluteAngle = int16(h.leftLimitAngle)
+	} else if absoluteAngle > int16(h.rightLimitAngle) {
+		absoluteAngle = int16(h.rightLimitAngle)
 	}
 
 	// Set the servo angle
@@ -308,15 +314,6 @@ func (h *DefaultHandler) SetAngleRelativeToCenter(relativeAngle int16) tinygoerr
 //
 // An error if the angle is not within the right limit
 func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygoerrors.ErrorCode {
-	// Check if the angle is negative
-	if angle < 0 {
-		angle = 0
-	}
-
-	// Check if the angle is within the right limit
-	if angle > h.rightLimitAngle-h.centerAngle {
-		angle = h.rightLimitAngle - h.centerAngle
-	}
 	return h.SetAngleRelativeToCenter(int16(angle))
 }
 
@@ -330,14 +327,5 @@ func (h *DefaultHandler) SetAngleToRight(angle uint16) tinygoerrors.ErrorCode {
 //
 // An error if the angle is not within the left limit
 func (h *DefaultHandler) SetAngleToLeft(angle uint16) tinygoerrors.ErrorCode {
-	// Check if the angle is negative
-	if angle < 0 {
-		angle = 0
-	}
-
-	// Check if the angle is within the left limit
-	if angle > h.centerAngle - h.leftLimitAngle {
-		angle = h.centerAngle - h.leftLimitAngle
-	}
 	return h.SetAngleRelativeToCenter(-int16(angle))
 }
